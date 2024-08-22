@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang='zh-TW'>
+
+<head>
+  <meta charset='UTF-8'>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+  <meta name='viewport' content='width=device-width,initial-scale=1.0'>
+  <meta name='description' content='輸入網站描述---------------- /'>
+  <meta name='keywords' content='輸入網站關鍵字/---------------- /'>
+
+  <title>模擬 CORS 情境</title>
+</head>
+
+<body>
+  <!-- API 按鈕列表 -->
+  <ul id="ul"></ul>
+
+  <!-- 渲染資料 -->
+  <div id="text"></div>
+</body>
+
+<script>
+    ; (() => {
+      let todoData = []
+      const apiUrl = 'http://localhost:8087/todolist'
+
+      init()
+
+      function init() {
+        render()
+      }
+
+      function render() {
+        renderBtns()
+      }
+
+      function renderBtns() {
+          const apiBtnsData = {
+            get: {
+              name: '查詢資料',
+              method: getHandler
+            },
+            post: {
+              name: '新增資料',
+              method: postHandler
+            },
+            delete: {
+              name: '刪除資料',
+              method: deleteHandler
+            },
+            patch: {
+              name: '修改單筆資料',
+              method: patchHandler
+            },
+          }
+          const ul = document.querySelector('#ul')
+          let str = ''
+
+          Object.keys(apiBtnsData).forEach(key => {
+            const li = document.createElement('li')
+            const btn = document.createElement('button')
+
+            btn.type = 'button'
+            btn.textContent = apiBtnsData[key].name
+            btn.style.fontSize = '40px'
+            btn.addEventListener('click', apiBtnsData[key].method)
+
+            li.appendChild(btn)
+            ul.appendChild(li)
+          })
+        }
+      function renderText () {
+        const text = document.querySelector('#text')
+        text.textContent = JSON.stringify(todoData)
+      }
+        
+      // 事件處理
+      function getHandler() {
+          fetch(apiUrl, {
+            method: 'GET'
+          })
+            .then(async response => {
+              const res = await response.json()
+              todoData = res.data
+              renderText()
+              console.log('todoData: ', todoData)
+            })
+            .catch(error => console.error('Error:', error))
+        }
+      function postHandler() {
+        fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ title: 'New Task' }),
+          mode: 'cors'
+        })
+          .then(response => response.json())
+          .then(data => {
+            console.log('新增成功!!', data)
+
+            getHandler()
+          })
+          .catch(error => console.error('Error:', error))
+      }
+      function deleteHandler() {
+        const id = todoData[0]?.id
+        if (!id) return
+
+        fetch(`${apiUrl}/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          mode: 'cors'
+        })
+          .then(response => response.json())
+          .then(data => {
+            console.log('刪除成功!!', data)
+            getHandler()
+          })
+          .catch(error => console.error('Error:', error))
+      }
+      function patchHandler() {
+          const id = todoData[0]?.id
+          if (!id) return
+
+          fetch(`${apiUrl}/${id}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ title: 'Updated Task' }),
+            mode: 'cors'
+          })
+            .then(response => response.json())
+            .then(data => {
+              console.log('修改成功!!', data)
+            })
+            .catch(error => console.error('Error:', error))
+        }
+    })()
+</script>
+
+</html>
