@@ -1,25 +1,30 @@
-<h1>此為 Node.js TodoList 的 API 實踐</h1>
-<h2>功能列表</h2>
-<ul>
-  <li>判斷網址是否正確，否則 404 頁面</li>
-  <li>取得所有待辦列表</li>
-  <li>新增待辦
-    <ul>
-      <li>判斷傳送屬性是否符合規範</li>
-      <li>判斷傳送格式是否正確</li>
-      <li>符合規範即新增一筆待辦、ID、日期(補八小時時差)</li>
-    </ul>
-  </li>
-  <li>編輯單筆待辦
-    <ul>
-      <li>判斷 ID 是否正確</li>
-    </ul>
-  </li>
-  <li>刪除所有待辦</li>
-  <li>刪除單筆待辦
-    <ul>
-      <li>判斷傳送屬性是否符合規範</li>
-      <li>判斷 ID 是否正確</li>
-    </ul>
-  </li>
-</ul>
+練習解決 CORS 跨域 ( 同源策略 )  的測試庫
+
+說明：
+
+**(一)** 為了模擬兩個不同域名的情境，所以自己建立了簡單的後端 API，以及前端打 API 的部分
+
+以下為模擬前、後端因域名不同所出現的 CORS 錯誤，以及解決流程：
+
+( 以下 frontend 簡稱前端；backend 簡稱後端 )
+
+1. 先將此儲存庫下載下來，並用 VSCode 開啟
+2. 終端機切換到後端： `cd .\backend\`
+3. 後端安裝套件：`npm i`
+4. 啟動後端伺服器 ：`node server.js`
+5. 開啟 Go Live (網頁預覽) → 選擇 frontend
+6. 點擊畫面上的按鈕可呼叫 API，並且會出現 CORS 的錯誤
+7. 到此為止，已正確建立不同網域的測試環境了
+
+**(二)** 碰到跨域時的解決方案
+
+1. 安裝 Chome 套件  [**Moesif Origin/CORS Changer & API Logger**](https://chromewebstore.google.com/detail/digfbfaphojjndkpccljibejjbppifbc)
+2. 使用[無安全模式瀏覽器](https://www.notion.so/afd9ce1fdd0f42bc95ac9ecaf4977699?pvs=21)
+3. 使用代理伺服器
+4. 使用 JSONP ( 只能用 get 請求，無法使用其他的 HTTP 請求 )
+5. 請後端在 API 加上標頭
+
+**(三)** 注意!
+
+- 每次後端改動程式都要重新啟動伺服器，才能吃到最後更新的程式
+- 需使用 `node server.js` 啟動伺服器，前端才 call 的到 API
